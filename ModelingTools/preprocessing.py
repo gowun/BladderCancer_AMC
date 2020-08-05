@@ -7,7 +7,7 @@ from sklearn.preprocessing import RobustScaler
 from sklearn.preprocessing import Normalizer
 from sklearn.preprocessing import QuantileTransformer
 from sklearn.preprocessing import PowerTransformer
-from RankGauss import RankGaussScaler
+from .RankGauss import RankGaussScaler
 from scipy.stats import normaltest, ttest_ind_from_stats
 
 
