@@ -8,8 +8,7 @@ from sklearn.preprocessing import Normalizer
 from sklearn.preprocessing import QuantileTransformer
 from sklearn.preprocessing import PowerTransformer
 from RankGauss import RankGaussScaler
-from scipy.stats import normaltest
-from scipy.stats import ks_2samp
+from scipy.stats import normaltest, ttest_ind_from_stats
 
 
 def scale_with_scalers(X, selected_scalers):
@@ -75,7 +74,7 @@ def find_best_normalization(df, distributions, class_labels):
     return best, nor_df
 
 
-def compare_two_samples_and_draw_feasible_columns(sample1, sample2):
+def compare_two_samples_and_draw_feasible_columns(sample1, sample2, min_pvalue=0.01):
     col1 = set(sample1.columns)
     col2 = set(sample2.columns)
     interset_cols = sorted(col1.intersection(col2))
@@ -83,8 +82,9 @@ def compare_two_samples_and_draw_feasible_columns(sample1, sample2):
     passed_cols = []
     for c in interset_cols:
         # For a different distribution, we can reject the null hypothesis since the pvalue is below 1%
-        _, pvalue = ks_2samp(sample1[c], sample2[c])
-        if pvalue >= 0.01:
+        s1, s2 = sample1[c], sample2[c]
+        _, pvalue = ttest_ind_from_stats(np.mean(s1), np.std(s1), s1, np.mean(s2), np.std(s2), s2, False)
+        if pvalue >= min_pvalue:
             passed_cols.append(c)
     
     return passed_cols
@@ -108,5 +108,4 @@ def handle_repeated_columns(df, mode='avg'):
                 df_dict[c] = list(df[c].min(1))
     
     return frq_dict, pd.DataFrame(df_dict, index=df.index)
-
 
