@@ -96,7 +96,11 @@ def handle_repeated_columns(df, mode='avg'):
     frq_dict = dict()
     df_dict = dict()
     for c in cols:
-        frq_dict[c] = df[c].shape[1]
+        tmp = df[c].shape
+        if len(tmp) == 1:
+            frq_dict[c] = 1
+        else:
+            frq_dict[c] = tmp[1]
         if frq_dict[c] == 1:
             df_dict[c] = list(df[c])
         else:
