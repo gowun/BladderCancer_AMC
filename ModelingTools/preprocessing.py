@@ -81,9 +81,10 @@ def compare_two_samples_and_draw_feasible_columns(sample1, sample2, min_pvalue=0
 
     passed_cols = []
     for c in interset_cols:
+        print(c)
         # For a different distribution, we can reject the null hypothesis since the pvalue is below 1%
         s1, s2 = sample1[c], sample2[c]
-        _, pvalue = ttest_ind_from_stats(np.mean(s1), np.std(s1), len(s1), np.mean(s2), np.std(s2), len(s2), False)
+        _, pvalue = ttest_ind_from_stats(np.mean(s1), np.std(s1), len(s1), np.mean(s2), np.std(s2), len(s2))
         if pvalue >= min_pvalue:
             passed_cols.append(c)
     
