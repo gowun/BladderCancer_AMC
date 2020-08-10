@@ -45,7 +45,7 @@ def scale_with_scalers(X, selected_scalers):
     return scaled_dict
 
 
-def check_varied_normality(distributions, ith_feature, feature_name, data_labels=None, draw=False):
+def check_varied_normality(distributions, ith_feature):
     normal = dict()
     for i in distributions.keys():
         method = i
@@ -54,10 +54,10 @@ def check_varied_normality(distributions, ith_feature, feature_name, data_labels
     return normal
 
 
-def find_normality_degree(df, distributions, class_labels):
+def find_normality_degree(df, distributions):
     method_scores = {}
-    for i, col in enumerate(df.columns):
-        tmp = check_varied_normality(distributions, i, col, class_labels)
+    for i in range(len(df.columns)):
+        tmp = check_varied_normality(distributions, i)
         for k, v in tmp.items():
             if v[1] >= 0.05:
                 if k in method_scores.keys():
@@ -67,8 +67,8 @@ def find_normality_degree(df, distributions, class_labels):
     return method_scores
 
 
-def find_best_normalization(df, distributions, class_labels):
-    method_scores = find_normality_degree(df, distributions, class_labels)
+def find_best_normalization(df, distributions):
+    method_scores = find_normality_degree(df, distributions)
     best = sorted(list(method_scores.items()), key=lambda x: x[1])[-1][0]
     nor_df = pd.DataFrame(distributions[best], columns=df.columns, index=df.index)
     return best, nor_df
