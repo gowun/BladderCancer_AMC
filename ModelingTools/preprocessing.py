@@ -15,7 +15,7 @@ def scale_with_scalers(X, selected_scalers):
     X = X.astype(float)
     if selected_scalers == 'all':
         selected_scalers = ['log2', 'log2_minmax', 'standard', 'minmax', 'max_abs', 'robust', 'power', 'quantile', 'l2', 'rankgauss']
-    if len(filter(map(lambda x: 'log2' in x, selected_scalers))) > 0:
+    if len(list(filter(lambda x: 'log2' in x, selected_scalers))) > 0:
         X_log2 = pd.DataFrame()
         for c in X.columns:
             X_log2[c] = np.log2(X[c]).apply(lambda x: max([x, 0.0]))
