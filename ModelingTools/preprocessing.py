@@ -11,8 +11,8 @@ from .RankGauss import RankGaussScaler
 from scipy.stats import normaltest, ttest_ind_from_stats
 
 
-def scale_with_scalers(X, selected_scalers):
-    X = X.astype(float)
+def scale_with_scalers(df, selected_scalers):
+    X = df.astype(float)
     if selected_scalers == 'all':
         selected_scalers = ['log2', 'log2_minmax', 'standard', 'minmax', 'max_abs', 'robust', 'power', 'quantile', 'l2', 'rankgauss']
     if 'log2' in ''.join(selected_scalers):
@@ -41,37 +41,9 @@ def scale_with_scalers(X, selected_scalers):
             scaled_dict[sc] = Normalizer().fit_transform(X)
         elif sc == 'rankgauss':
             scaled_dict[sc] = RankGaussScaler().fit_transform(X)
+        scaled_dict[sc] = pd.DataFrame(scaled_dict[sc], columns=df.columns)
     
     return scaled_dict
-
-
-def check_varied_normality(distributions, ith_feature):
-    normal = dict()
-    for i in distributions.keys():
-        method = i
-        arr1d = distributions[i][:, ith_feature]
-        normal[method] = normaltest(arr1d)
-    return normal
-
-
-def find_normality_degree(df, distributions):
-    method_scores = {}
-    for i in range(len(df.columns)):
-        tmp = check_varied_normality(distributions, i)
-        for k, v in tmp.items():
-            if v[1] >= 0.05:
-                if k in method_scores.keys():
-                    method_scores[k] += 1
-                else:
-                    method_scores[k] = 1
-    return method_scores
-
-
-def find_best_normalization(df, distributions):
-    method_scores = find_normality_degree(df, distributions)
-    best = sorted(list(method_scores.items()), key=lambda x: x[1])[-1][0]
-    nor_df = pd.DataFrame(distributions[best], columns=df.columns, index=df.index)
-    return best, nor_df
 
 
 def compare_two_samples_and_draw_feasible_columns(sample1, sample2, min_pvalue=0.01):
@@ -81,7 +53,6 @@ def compare_two_samples_and_draw_feasible_columns(sample1, sample2, min_pvalue=0
 
     passed_cols = []
     for c in interset_cols:
-        print(c)
         # For a different distribution, we can reject the null hypothesis since the pvalue is below 1%
         s1, s2 = sample1[c], sample2[c]
         _, pvalue = ttest_ind_from_stats(np.mean(s1), np.std(s1), len(s1), np.mean(s2), np.std(s2), len(s2))
