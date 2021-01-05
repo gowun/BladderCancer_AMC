@@ -11,6 +11,7 @@ from scipy.stats import ttest_ind, ttest_rel
 def compute_performance(real_y, pred_y, prob):
     performance = dict()
     performance['AUC'] = met.roc_auc_score(real_y, prob)
+    performance['PRAUC'] = met.average_precision_score(real_y, prob)
     performance['accuracy'] = met.accuracy_score(real_y, pred_y)
     performance['precision'] = met.precision_score(real_y, pred_y)
     performance['recall'] = met.recall_score(real_y, pred_y)
