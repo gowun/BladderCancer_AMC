@@ -293,7 +293,7 @@ def count_by_cutoff(data_df, rule_df):
   return cnts
 
 
-def random_forest_with_performance(train_X_y, n_estimators, max_depth, min_sample_leaf, ratio_features=0.8, valid_X_y=None):
+def random_forest_with_performance(train_X_y, n_estimators, max_depth, min_sample_leaf, ratio_features=0.8, valid_X_y=None, random_state=1234):
     X, y = train_X_y
     if valid_X_y is None:
       vX = X
@@ -302,7 +302,7 @@ def random_forest_with_performance(train_X_y, n_estimators, max_depth, min_sampl
       vX, vy = valid_X_y
     rf = RandomForestClassifier(class_weight='balanced_subsample', max_features=ratio_features, 
                                 n_estimators=n_estimators, max_depth=max_depth, 
-                                min_samples_leaf=min_sample_leaf, random_state=1234).fit(X, y)
+                                min_samples_leaf=min_sample_leaf, random_state=random_state).fit(X, y)
     pred = rf.predict(vX)
     prob = rf.predict_proba(vX)[:, 1]
     
